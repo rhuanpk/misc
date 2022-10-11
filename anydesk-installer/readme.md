@@ -3,5 +3,5 @@
 To autoinstall run:
 
 ```bash
-curl -fsSL 'https://raw.githubusercontent.com/rhuan-pk/tmp/master/anydesk-installer/anydesk-installer' | bash -
+curl -fsSL 'https://raw.githubusercontent.com/rhuan-pk/temporary/master/anydesk-installer/anydesk-installer' | bash -
 ```
