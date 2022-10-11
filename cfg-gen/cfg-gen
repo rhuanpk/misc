@@ -1,0 +1,85 @@
+#!/usr/bin/env bash
+
+# Gera arquivos de configuração padrão. 
+
+verify_privileges() {
+        if [ ${UID} -eq 0 ]; then
+                echo -e "ERROR: Run this program without privileges!\nExiting..."
+                exit 1
+        fi
+}
+
+print_usage() {
+        echo -e "Run:\n\t./$(basename ${0})"
+}
+
+verify_privileges
+
+[ ${#} -lt 1 -o ${#} -gt 1 -o "${1,,}" = '-h' -o "${1,,}" = '--help' ] && {
+        print_usage
+        exit 1
+}
+
+# >>>>> PROGRAM START <<<<<
+		
+# ********** Declaração de Variáveis **********
+
+declare -a if_list_array
+declare -a if_list_answer
+binary_main=cfg-gen
+binary_shows=whiptail-shows
+binary_getter=whiptail-getter
+file_variables=variable_list
+config_files=config_files
+tmp_dir=$(mktemp -d /tmp/cfg-gen_XXXXXXX)
+git_url=https://github.com/rhuan-pk/tmp.git
+repo_name=$(
+	last_slash=$(grep -oF / <<< $git_url | wc -l)
+	repo_name=$(cut -d '/' -f $((${last_slash}+1)) <<< ${git_url})
+	if [[ $repo_name =~ '.*\.git' ]]; then
+		echo $repo_name
+	else
+		echo ${repo_name%.*}
+	fi
+)
+config_git_url="${1}"
+
+# ********** Início do Programa **********	
+
+cd $tmp_dir
+git clone $git_url
+mv ./${repo_name}/${binary_main}/* ./
+rm -rf ./${repo_name}/
+git clone "${config_git_url}" "./${config_files}/"
+
+# grep --exclude-from=<(basename ./${file_variables}) -hoRE '(__[[:alpha:]]+__)' ./ | sort -u
+grep -hoRE '(__[[:alpha:]]+__)' "./${config_files}/" | sort -u > "./${file_variables}"
+
+while read input; do
+	if_list_array[${#if_list_array[@]}]="${input} \"\" OFF"
+done < <(grep -E '^(__if)' ./${file_variables} | sed -E 's/^__if|__$//g')
+
+for input in $(
+	whiptail --title ${binary_main} --checklist 'Escolha dos arquivo com marcação IF:' 0 0 0 ${if_list_array[@]} 3>&1 1>&2 2>&3
+); do
+	if_list_answer[${#if_list_answer[@]}]=$(tr -d '"' <<< ${input})
+done
+
+counter=0
+for if_item in ${if_list_array[@]}; do
+	[ $if_item = ${if_list_answer[${counter}]:-'NULL'} ] && {
+		for file in $(ls -1 ./${config_files}/*-${if_item}); do
+			sed -i "s/__if${if_item}__//" $file
+			mv -v ${file} ${file%-*}
+		done
+	} || rm -fv ./${config_files}/*-${if_item}
+	let ++counter
+done
+
+for variable in $(sed '/^__if.*$/d' ${file_variables}); do
+	tmux new-session -s "${binary_main}" "./${binary_shows} ${binary_main} ${variable} ${file_variables}; bash"\; \
+		set-option status off\; \
+		split-window -v "./${binary_getter} ${binary_main} ${variable} ${file_variables} ${config_files}; bash"\; \
+		set-window-option pane-active-border-style bg=magenta,hidden\; \
+		set-window-option pane-border-style bg=magenta,hidden
+done

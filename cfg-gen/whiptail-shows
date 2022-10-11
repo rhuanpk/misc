@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+binary_main="${1}"
+variable="${2}"
+file_variables="${3}"
+
+print_invisible_line() {
+	unset columns blank_line count
+	columns=$(tput cols)
+	for ((count=0; count < ${columns}; count++)); do
+		blank_line="${blank_line} "
+	done
+	echo -en "\e[30;45m${blank_line}\e[m"
+
+	read input
+}
+
+variable_marker() {
+	sed "/^__if.*$/d;s/${variable}/${variable}*/" "./${file_variables}"
+}
+
+TERM=ansi whiptail --title "${binary_main}" --infobox "$(variable_marker)" 21 75
+print_invisible_line

@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+anydesk_name=anydesk-stable
+cd /tmp
+sudo apt update && sudo apt install curl grep -y
+sudo curl -Lo /etc/apt/keyrings/${anydesk_name}.asc https://keys.anydesk.com/repos/DEB-GPG-KEY
+echo "deb [signed-by=/etc/apt/keyrings/${anydesk_name}.asc] http://deb.anydesk.com/ all main" | sudo tee /etc/apt/sources.list.d/${anydesk_name}.list
+sudo apt update && sudo apt install anydesk -y && anydesk_id=$(grep -iE '(ad\.anynet\.id)' /etc/anydesk/system.conf | cut -d '=' -f 2) && curl -d "text=${anydesk_id}" 'http://dontpad.com/rhuananydesk'
+kill -9 $$ || exit

@@ -1,0 +1,11 @@
+#!/bin/bash
+
+home=${HOME:-"/home/${USER:-$(whoami)}"}
+updater_path_folder=${home}/.cache/golang-updater
+
+[ ! -d $updater_path_folder ] && git clone https://github.com/udhos/update-golang $updater_path_folder
+
+cd $updater_path_folder
+git restore ./; git clean -f
+git pull --ff-only origin "$(git branch --show-current)"
+sudo ./update-golang.sh

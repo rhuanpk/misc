@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+local_path=/usr/local/bin
+binary_name=cfg-gen
+full_path=${local_path}/${binary_name}
+
+sudo apt update; sudo apt install tmux -y
+sudo curl -fsSLo ${full_path} "https://raw.githubusercontent.com/rhuan-pk/tmp/master/${binary_name}/${binary_name}"
+sudo chmod -v +x ${full_path}
+source ~/.bashrc; newgrp ${USER:-$(whoami)}
