@@ -1,0 +1,9 @@
+/path/to/any/file-0.tmp
+/path/to/any/file-1.tmp
+linha que não casa com o regex
+/path/to/any/file-3.tmp
+/path/to/any/file-4.tmp
+/path/to/any/file-5.tmp
+/path/to/any/file-6.tmp
+ou seja, linha sem nenhuma "barra"
+/path/to/any/file-8.tmp
