@@ -1,8 +1,8 @@
 #!/bin/bash
 
 temporary_directory=$(mktemp -d /tmp/temporary_XXXXXXX)
-repo_path=${temporary_directory}/grep_example
-binary_name=grep_example.sh
+binary_name=grep_example
+repo_path=${temporary_directory}/${binary_name}
 
 git clone 'https://github.com/rhuan-pk/temporary.git' $temporary_directory
 cd ${repo_path}

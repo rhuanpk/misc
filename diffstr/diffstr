@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+
+# Diff between strings or files.
+
+script=$(basename ${0})
+
+verify_privileges() {
+        if [ ${UID} -eq 0 ]; then
+                echo -e "ERROR: Run this program without privileges!\nExiting..."
+                exit 1
+        fi
+}
+
+print_usage() {
+        cat <<- eof
+		###############################################
+		#
+		# >>> $script !
+		#
+		# Diff between strings or files.
+		#
+		# Example:
+		#
+		# 	$script "any string" /path/to/file.txt
+		#
+		###############################################
+	eof
+}
+
+# verify_privileges
+
+[ ${#} -le 1 -o "${1,,}" = '-h' -o "${1,,}" = '--help' ] && {
+        print_usage
+        exit 1
+}
+
+# >>>>> PROGRAM START <<<<<
+
+rtstr() {
+	while getopts 'hf' opt; do
+		case $opt in
+			h) print_usage; exit 0;;
+			# f) file_convert=true;;
+			?) print_usage; exit 1;;
+		esac
+	done
+	shift $((${OPTIND}-1))
+	any="${1}"
+	[[ -f $any && ! $any =~ [[:blank:]]+ ]] && cat $any || echo $any
+}
+
+if phrase=$(wdiff <(rtstr "${1}") <(rtstr "${2}")); then
+	echo -e "\e[1;32;40mNo differences ✔\e[m"
+else
+	colordiff <<< $phrase | sed -E 's/\[-|-\]|\{\+|\+\}//g'
+fi
