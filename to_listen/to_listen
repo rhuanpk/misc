@@ -22,6 +22,14 @@ verify_privileges
 
 # >>>>> PROGRAM START <<<<<
 
+check_needs() {
+	y_package=xdotool
+	if ! dpkg -s ${y_package} &>/dev/null; then
+		read -rp "this script needs the ${y_package} package but not installed, install this? [Y/n] " answer
+		[ -z $answer ] || [ 'y' = ${answer,,} ] && sudo apt install $y_package -y
+	fi
+}
+
 x-www-browser 'https://translate.google.com/?sl=en&tl=pt&text=9223372036854775808&op=translate'
 sleep 5
 for zkt in $(seq 7); do
