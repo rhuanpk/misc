@@ -30,6 +30,8 @@ check_needs() {
 	fi
 }
 
+check_needs
+
 x-www-browser 'https://translate.google.com/?sl=en&tl=pt&text=9223372036854775808&op=translate'
 sleep 5
 for zkt in $(seq 7); do
