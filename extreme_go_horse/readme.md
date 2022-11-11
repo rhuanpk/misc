@@ -95,3 +95,5 @@
 Referenced links:
 
 - [eXtreme Go Horse (XGH) &#8211; GO HORSE PROCESS](https://gohorseprocess.com.br/extreme-go-horse-xgh/#:~:text=XGH%20n%C3%A3o%20pensa%2C%20faz%20a,errada%2C%20s%C3%B3%20que%20mais%20r%C3%A1pida)
+
+- [Definição GOHORSE](https://youtu.be/kv2DiFQXq9Q)
