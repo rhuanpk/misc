@@ -59,11 +59,13 @@ while read input; do
 	if_list_array[${#if_list_array[@]}]="${input} \"\" OFF"
 done < <(grep -E '^(__if)' ./${file_variables} | sed -E 's/^__if|__$//g')
 
-for input in $(
-	whiptail --title ${binary_main} --checklist 'Escolha dos arquivo com marcação IF:' 0 0 0 ${if_list_array[@]} 3>&1 1>&2 2>&3
-); do
-	if_list_answer[${#if_list_answer[@]}]=$(tr -d '"' <<< ${input})
-done
+[ -n $if_list_array ] && {
+	for input in $(
+		whiptail --title ${binary_main} --checklist 'Escolha dos arquivo com marcação IF:' 0 0 0 ${if_list_array[@]} 3>&1 1>&2 2>&3
+	); do
+		if_list_answer[${#if_list_answer[@]}]=$(tr -d '"' <<< ${input})
+	done
+}
 
 counter=0
 for if_item in ${if_list_array[@]}; do
