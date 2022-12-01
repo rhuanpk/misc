@@ -70,11 +70,11 @@ done < <(grep -E '^(__if)' ./${file_variables} | sed -E 's/^__if|__$//g')
 counter=0
 for if_item in ${if_list_array[@]}; do
 	[ $if_item = ${if_list_answer[${counter}]:-'NULL'} ] && {
-		for file in $(ls -1 ./${config_files}/*-${if_item}); do
+		for file in $(ls -1 ./${config_files}/*-${if_item}*); do
 			sed -i "s/__if${if_item}__//" $file
 			mv -v ${file} ${file%-*}
 		done
-	} || rm -fv ./${config_files}/*-${if_item}
+	} || rm -fv ./${config_files}/*-${if_item}*
 	let ++counter
 done
 
