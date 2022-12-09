@@ -1,0 +1,81 @@
+#!/usr/bin/env bash
+
+check_needs() {
+	unset package answer
+	for package in ${@:-'needs informe a package for verifing!'}; do
+		if ! dpkg -s $package &>/dev/null; then
+			read -rn 1 -p "this script needs the $package package but not installed, install this? [Y/n] " answer
+			[ -z $answer ] || [ 'y' = ${answer,,} ] && sudo apt install $package -y
+		fi
+	done
+}
+
+check_needs tmux git
+tmux new-session \
+	-s git_rebase "
+		echo '--------------- cloning repo ---------------'
+		cd /tmp
+		rm -rf './git_rebase_first_repo/'
+		git clone 'https://github.com/rhuan-pk/teste.git' './git_rebase_first_repo'
+		cd './git_rebase_first_repo/'
+		echo '--------------- atual path -----------------'
+		pwd
+		echo '--------------------------------------------'
+		env bash
+	"\; \
+	split-window -h "
+		echo '--------------- cloning repo ---------------'
+		cd /tmp
+		rm -rf './git_rebase_second_repo/'
+		git clone 'https://github.com/rhuan-pk/teste.git' './git_rebase_second_repo'
+		cd './git_rebase_second_repo/'
+		echo '--------------- atual path -----------------'
+		pwd
+		echo '--------------------------------------------'
+		env bash
+	"\; \
+	split-window -v "
+		while :; do
+			sleep .5
+			if [ -d /tmp/git_rebase_second_repo/ ]; then
+				cd /tmp/git_rebase_second_repo/
+				break
+			fi
+		done
+		while :; do
+			sleep .5
+			if git status; then
+				break
+			fi
+		done
+		while :; do
+			sleep 1
+			clear
+			git log --oneline --color -5 | cut -d ' ' -f 1
+		done
+	"\; \
+	resize-pane -y 6 \; \
+	select-pane -L \;\
+	split-window -v "
+		while :; do
+			sleep .5
+			if [ -d /tmp/git_rebase_first_repo/ ]; then
+				cd /tmp/git_rebase_first_repo/
+				break
+			fi
+		done
+		while :; do
+			sleep .5
+			if git status; then
+				break
+			fi
+		done
+		while :; do
+			sleep 1
+			clear
+			git log --oneline --color -5 | cut -d ' ' -f 1
+		done
+	"\; \
+	resize-pane -y 6 \; \
+	select-pane -U\; \
+	set-option status off
