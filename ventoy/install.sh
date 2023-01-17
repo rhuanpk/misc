@@ -17,6 +17,6 @@ curl -fsSL 'https://api.github.com/repos/ventoy/Ventoy/releases/latest' \
 	&& cd ./ventoy*/
 
 message_separator
-echo "$(pwd):\n"
+pwd
 ls -lhF --color=always
 message_separator
