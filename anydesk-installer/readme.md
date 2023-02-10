@@ -1,4 +1,4 @@
-# anydesk\_install.sh
+# anydesk-installer
 
 To autoinstall run:
 
