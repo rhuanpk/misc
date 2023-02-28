@@ -16,7 +16,7 @@ tmux new-session \
 		echo '--------------- cloning repo ---------------'
 		cd /tmp
 		rm -rf './git_rebase_first_repo/'
-		git clone 'https://github.com/rhuan-pk/teste.git' './git_rebase_first_repo'
+		git clone 'https://github.com/rhuanpk/teste.git' './git_rebase_first_repo'
 		cd './git_rebase_first_repo/'
 		echo '--------------- atual path -----------------'
 		pwd
@@ -27,7 +27,7 @@ tmux new-session \
 		echo '--------------- cloning repo ---------------'
 		cd /tmp
 		rm -rf './git_rebase_second_repo/'
-		git clone 'https://github.com/rhuan-pk/teste.git' './git_rebase_second_repo'
+		git clone 'https://github.com/rhuanpk/teste.git' './git_rebase_second_repo'
 		cd './git_rebase_second_repo/'
 		echo '--------------- atual path -----------------'
 		pwd

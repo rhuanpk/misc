@@ -5,6 +5,6 @@ binary_name=cfg-gen
 full_path=${local_path}/${binary_name}
 
 sudo apt update; sudo apt install tmux -y
-sudo curl -fsSLo ${full_path} "https://raw.githubusercontent.com/rhuan-pk/temporary/master/${binary_name}/${binary_name}"
+sudo curl -fsSLo ${full_path} "https://raw.githubusercontent.com/rhuanpk/temporary/master/${binary_name}/${binary_name}"
 sudo chmod -v +x ${full_path}
 source ~/.bashrc; newgrp ${USER:-$(whoami)}

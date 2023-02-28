@@ -2,5 +2,5 @@
 
 ## run
 ```bash
-curl -fsSL https://raw.githubusercontent.com/rhuan-pk/temporary/master/ventoy/install.sh | bash -
+curl -fsSL https://raw.githubusercontent.com/rhuanpk/temporary/master/ventoy/install.sh | bash -
 ```
