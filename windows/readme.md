@@ -22,3 +22,20 @@ Lista de coisas a se fazer para otimizar o Windows (num pós-install por exemplo
 - `super+r` -> "msconfig" -> Serviços -> Ocultar serviços microsoft -> _desabilite os serviços desejados_
 - `super+r` -> "taskschd.msc" -> _biblioteca/_ -> _desabilite os serviços desejados_
 - _**botão direito do mouse** no **menu iniciar**_ -> Gerenciador de dispositivos -> Dispositivos de sistema -> Timer de eventos de alta precisão -> _botão direito_ -> Desabilitar dispositivo
+
+## IA
+
+Configuração para desabilitar por completo as funções de IA no sistema:
+
+1. `super+r` -> "regedit"
+1. _Computador\HKEY_CURRENT_USER\Software\Policies\Microsoft\Windows_
+1. _botão direito_ -> Nova -> Chave -> "WindowsCopilot"
+1. _botão direito_ -> Nova -> Valor DWORD -> "TurnOffWindowsCopilot"
+1. _botão direito_ -> Modificar -> "1"
+
+## Misc
+
+Certificado digital:
+
+- <https://manuais.soluti.com.br/certificado-a1-pj/instalando-o-certificado-digital/instalacao-windows>
+- <https://youtu.be/aWqYiTAoDzw>
