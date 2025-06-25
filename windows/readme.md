@@ -36,13 +36,14 @@ Configuração para desabilitar por completo as funções de IA no sistema:
 
 ## Troubleshooting
 
-Erro **0x80070306** no _Windows Update_:
-1. `dism.exe /online /cleanup-image /checkhealth`
-1. `dism.exe /online /cleanup-image /scanhealth`
-1. `dism.exe /online /cleanup-image /restorehealth`
-1. `sfc /scannow`
+- Erro **0x80070306** no _Windows Update_:
+    1. `dism.exe /online /cleanup-image /checkhealth`
+    1. `dism.exe /online /cleanup-image /scanhealth`
+    1. `dism.exe /online /cleanup-image /restorehealth`
+    1. `sfc /scannow`
+    - OBS: Decorrente da desinstalação do _Microsoft Edge_?
 
-OBS: Decorrente da desinstalação do _Microsoft Edge_?
+- Reparar partição NTFS: `chkdsk X: /f /r`
 
 ## Misc
 
