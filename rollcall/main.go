@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"net"
@@ -23,6 +24,10 @@ var (
 
 func init() {
 	var err error
+
+	if err := os.Mkdir(folderName, 0775); err != nil && !errors.Is(err, os.ErrExist) {
+		log.Fatalln("error creating folder:", err)
+	}
 
 	file, err = os.OpenFile(fileName, os.O_CREATE|os.O_RDWR|os.O_APPEND, 0644)
 	if err != nil {
