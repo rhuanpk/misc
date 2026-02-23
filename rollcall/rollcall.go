@@ -25,7 +25,7 @@ func close(conn net.Conn) {
 
 func title() []byte {
 	const (
-		msg       = "Sistema de Chamada Offline"
+		msg       = "Sistema de Chamada"
 		msgLen    = len(msg)
 		msgHalf   = msgLen / 2
 		msgSub    = msgLen + (msgHalf / 2)
@@ -41,16 +41,89 @@ func title() []byte {
 	return []byte(title)
 }
 
-func menu() []byte {
-	var menu string
+func setup(conn net.Conn, reader *bufio.Reader, ln *bool) {
+	var setup string
+	setup += "1. Terminal\n"
+	setup += "2. Aplicativo\n"
+	setup += "Opção: "
+
+	conn.Write([]byte(setup))
+
+	input, err := reader.ReadString('\n')
+	if err != nil {
+		if err == io.EOF {
+			close(conn)
+			return
+		}
+		log.Println(conn.RemoteAddr(), "error reading input:", err)
+		return
+	}
+	input = strings.TrimRight(input, "\r\n")
+
+	option, err := strconv.Atoi(input)
+	if err != nil {
+		log.Println(conn.RemoteAddr(), "error parsing input:", err)
+		return
+	}
+
+	if option == 2 {
+		// ln = &[]bool{true}[0]
+		if ln == nil {
+			ln = new(bool)
+		}
+		*ln = true
+	}
+
+	if ln != nil && *ln {
+		conn.Write([]byte("\n"))
+	}
+}
+
+func menu(conn net.Conn, reader *bufio.Reader, ln bool) (int, string) {
+	var (
+		option int
+		input  string
+		menu   string
+		err    error
+	)
+
 	menu += "1. Presença\n"
 	menu += "0. Sair\n"
 	menu += "Opção: "
 
-	return []byte(menu)
+	for {
+		conn.Write([]byte(menu))
+
+		input, err = reader.ReadString('\n')
+		if err != nil {
+			if err == io.EOF {
+				close(conn)
+				return -1, ""
+			}
+			log.Println(conn.RemoteAddr(), "error reading input:", err)
+			conn.Write([]byte("> error reading input\n"))
+			continue
+		}
+		input = strings.TrimRight(input, "\r\n")
+
+		if ln {
+			conn.Write([]byte("\n"))
+		}
+
+		option, err = strconv.Atoi(input)
+		if err != nil {
+			log.Println(conn.RemoteAddr(), "error parsing input:", err)
+			conn.Write([]byte("> error parsing input\n"))
+			continue
+		}
+
+		break
+	}
+
+	return option, input
 }
 
-func option(conn net.Conn, file *os.File, reader *bufio.Reader, input string, option int) {
+func options(conn net.Conn, file *os.File, reader *bufio.Reader, option int, input string, ln bool) {
 	mu.Lock()
 	defer mu.Unlock()
 
@@ -64,6 +137,10 @@ func option(conn net.Conn, file *os.File, reader *bufio.Reader, input string, op
 			break
 		}
 		input = strings.TrimRight(input, "\r\n")
+
+		if ln {
+			conn.Write([]byte("\n"))
+		}
 
 		if _, err := file.Seek(0, io.SeekStart); err != nil {
 			log.Println(conn.RemoteAddr(), "error seeking file:", err)
@@ -109,9 +186,12 @@ func option(conn net.Conn, file *os.File, reader *bufio.Reader, input string, op
 func rollcall(conn net.Conn, file *os.File) {
 	defer conn.Close()
 
+	var ln bool
 	reader := bufio.NewReader(conn)
 
 	conn.Write(title())
+	setup(conn, reader, &ln)
+
 	for {
 		if _, err := conn.Read([]byte{}); err != nil {
 			if !strings.Contains(err.Error(), "closed network connection") {
@@ -120,23 +200,11 @@ func rollcall(conn net.Conn, file *os.File) {
 			break
 		}
 
-		conn.Write(menu())
-
-		input, err := reader.ReadString('\n')
-		if err != nil {
-			log.Println(conn.RemoteAddr(), "error reading input:", err)
-			conn.Write([]byte("> error reading input\n"))
-			continue
-		}
-		input = strings.TrimRight(input, "\r\n")
-
-		opt, err := strconv.Atoi(input)
-		if err != nil {
-			log.Println(conn.RemoteAddr(), "error parsing input:", err)
-			conn.Write([]byte("> error parsing input\n"))
-			continue
+		option, input := menu(conn, reader, ln)
+		if option == -1 {
+			break
 		}
 
-		option(conn, file, reader, input, opt)
+		options(conn, file, reader, option, input, ln)
 	}
 }

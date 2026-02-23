@@ -32,7 +32,7 @@ for arch in "${archs[@]}"; do
 
 		ext="${oses[$os]}"
 		app="${name}_$os-$arch.$ext"
-
+		
 		GOOS="$os" GOARCH="$arch" go build -ldflags='-s -w' -buildvcs=false -o "${path%/}/$app" "$main"
 		echo "$app OK"
 	done
